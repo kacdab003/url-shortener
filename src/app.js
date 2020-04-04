@@ -6,14 +6,16 @@ const bodyParser = require('body-parser');
 const linksController = require('./controllers/linksController')
 const app = express();
 
-const MONGODB_CONNECTION = `mongodb+srv://${process.env.DB_USR}:${process.env.DB_PWD}@cluster0-zeeqn.mongodb.net/test?retryWrites=true&w=majority`;
+const MONGODB_CONNECTION = process.env.DB_CONNECTION_URI 
 const PORT = process.env.PORT || 8080;
 app.use(bodyParser.json());
 app.get("/:name",linksController.getRedirected);
 app.post("/links/add",linksController.addLink);
-// app.use("/", (req, res, next) => {
-//   res.status(404).send('No webpage found');
-// });
+app.post("/links/update/:linkId",linksController.editLink);
+app.delete("/links/remove/:linkId",linksController.removeLink);
+app.use("/", (req, res, next) => {
+  res.status(404).send('No webpage found');
+});
 mongoose
   .connect(MONGODB_CONNECTION)
   .then(result => {
